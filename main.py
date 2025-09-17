@@ -8,9 +8,10 @@ resume_text = extract_text_from_pdf(resume_path)
 job_desc_text = extract_text_from_pdf(job_desc_path)
 
 level = input("Select interview difficulty (easy/moderate/experienced): ").lower()
+type= input ("Select Type of interview (HR/Technical): ").lower()
 
 if input("Start the interview? (y/n): ").lower() == "y":
-    results = run_interview(level, job_desc_text, resume_text)
+    results = run_interview(level, type,job_desc_text, resume_text)
     print("\n✅ Evaluation Summary:")
     for r in results:
         print(r)

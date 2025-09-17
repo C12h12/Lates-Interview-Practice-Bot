@@ -1,10 +1,10 @@
 import time, threading
-from prompts import get_level_prompt, FOLLOW_UP
+from prompts import get_level_prompt,type_prompt, FOLLOW_UP
 from evaluator import evaluate_answer
 from generator import generate_next_question
 from config import LEVEL_DURATIONS
 
-def run_interview(level, job_desc_text, resume_text):
+def run_interview(level, type,job_desc_text, resume_text):
     interview_duration = LEVEL_DURATIONS.get(level, 15 * 60)
     interview_end_flag = threading.Event()
 
@@ -23,6 +23,7 @@ context-aware questions and give constructive feedback.
 📌 Context
 ------------------------------------------------------------------
 Interview Level: {get_level_prompt(level)}   # Easy / Moderate / Hard
+Interview Type: {type_prompt(type)}   # HR / Technical / Mixed
 Job Description (JD): 
 {job_desc_text}
 
@@ -84,10 +85,9 @@ How did you prioritize your tasks?"
 
 ==================================================================
 Now, start the interview simulation. 
-First, greet the candidate and explain the format (e.g., 'I will ask you one question at a time. 
-After your answer, I’ll provide feedback. Let’s begin.').
+First, greet the candidate with a short, polite one-liner such as:
+"Good morning! Ready to begin your #role_name_in_JD interview practice?"
 """
-
 
 
     conversation_history = base_prompt + "Interviewer:"
