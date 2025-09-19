@@ -2,7 +2,7 @@ import os
 import requests
 
 MODEL_NAME = "gemini-1.5-flash-latest"
-API_KEY = "AIzaSyB0ouIASegDQ83IQW2s_apud2T5Ins4-ms"
+API_KEY = "AIzaSyC9AQ0VKIGnkJvVhSfxZntJ6_ARkqpiNWQ"
 API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_NAME}:generateContent?key={API_KEY}"
 
 def generator(prompt, max_tokens=150, temperature=0.7):
