@@ -7,7 +7,7 @@ MODEL_NAME = "gemini-1.5-flash-latest"
 
 # List of multiple API keys
 API_KEYS = [
-    "AIzaSyBti8PJfJ2d-bdeewPYHVHTsiGDxVIavRw"
+    "AIzaSyDkK_4aKI42cpwTGvllVN1JQ86yW2tObPI"
     # add more keys here
 ]
 
@@ -88,7 +88,7 @@ tokenizer = None
 
 # Level durations for interviews
 LEVEL_DURATIONS = {
-    "easy": 15 * 60,
+    "easy": 10 * 60,
     "moderate": 20 * 60,
     "experienced": 30 * 60
 }

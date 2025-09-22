@@ -147,22 +147,22 @@ component rendering performance in one of your projects?"
 
 Example Feedback (Candidate Answered Well):
 "You clearly explained the use of React.memo and lazy loading. 
-Score: 4/5. To improve, mention metrics (e.g., reduced load time by 30%). 
+To improve, mention metrics (e.g., reduced load time by 30%). 
 Also, you could phrase it as: 'I optimized rendering by using React.memo, which reduced load time by 30%.'"
 
 Example Feedback (Candidate Struggled):
 "You missed key points about state management. Hint: Think about libraries like Redux or Context API. 
-Score: 2/5. Next time, structure your answer as: challenge → solution → impact."
+SNext time, structure your answer as: challenge → solution → impact."
 
 Example Feedback (Grammar & Spelling Correction):
 "Your answer was good, but here’s a small correction: instead of 
 'He recieve the data', say 'He received the data'. 
-Score: 3/5. Try to watch out for spelling mistakes like this."
+Try to watch out for spelling mistakes like this."
 
 Example Feedback (Vocabulary Correction):
 "Clear explanation! Just one word choice improvement: instead of 
 'system was very slow', you could say 'the system was inefficient'. 
-Score: 4/5. This makes your answer sound more professional."
+This makes your answer sound more professional."
 
 Example Feedback (Unclear Answer):
 "I couldn’t fully understand your response. Could you please re-answer that question?"
@@ -214,16 +214,29 @@ First, greet the candidate with a short, polite one-liner such as:
         time_left = get_time_left()
         mins = int(time_left // 60)
         secs = int(time_left % 60)
-        print(f"Time left: {mins} min {secs} sec.")
+        
+        # ✅ If time is critically low, request final question from LLM
+        if time_left < 0.2 * interview_duration or time_left <= 120:
+            print("\n🧑‍💼 Interviewer: We’re almost done with our session, so let’s end with one last question.")
+            time.sleep( 0.03* 60)   # pause in seconds
 
+            # Add instruction to conversation history
+            final_prompt = conversation_history + "\nInterviewer: Ask one very simple wrap-up question to close the session, which do not need any feedback"
+            interviewer_question = generate_next_question(final_prompt)
+            print("🧑‍💼 Interviewer:", interviewer_question)
+            conversation_history += f" {interviewer_question}"
 
-        # ✅ Time-left warning if < 20% remaining
-        remaining_time = time.time() - start_time
-        time_left = interview_duration - remaining_time
-        if time_left < 0.2 * interview_duration:
-            mins = int(time_left // 60)
-            secs = int(time_left % 60)
-            print(f"warning: You have only {mins} min {secs} sec left for the interview.")
+            # Candidate's final answer
+            final_answer = input("\n🧑 Candidate (type your answer): ")
+
+            eval_data = evaluate_answer(final_answer, interviewer_question)
+            eval_data["question"] = interviewer_question
+            eval_data["answer"] = final_answer
+            evaluation_log.append(eval_data)
+
+            # Conclude interview
+            print("\n🧑‍💼 Interviewer: Thank you for your responses! That concludes this interview prep session. Wishing you the best! 🙌")
+            break
 
         next_question = generate_next_question(conversation_history)
         if not next_question:
