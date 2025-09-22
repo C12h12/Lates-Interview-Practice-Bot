@@ -1,11 +1,12 @@
 def get_level_prompt(level):
     if level == "easy":
-        return "Ask basic, beginner-friendly interview questions.Give Only 1 small sentence as overall response."
+        return "Always ask very simple, beginner-friendly questions in one short sentence only."
     elif level == "moderate":
-        return "Ask intermediate-level questions focusing on understanding and practical experience.Give Only 2 small sentences as overall response."
+        return "Always ask intermediate, practical questions in 1–2 short sentences.Example:"
     elif level == "experienced":
-        return "Ask advanced-level questions about architecture, decision-making, and deep technical topics.Give Only Hard,complex responses."
-    return "Ask general questions."
+        return "Always ask advanced, complex questions about system design, scalability, or trade-offs. Make it detailed and thought-provoking."
+    return "Always ask one general  interview question in one short sentence."
+
 
 def type_prompt(type):
     if type == "hr":

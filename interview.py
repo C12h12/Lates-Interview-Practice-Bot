@@ -9,10 +9,16 @@ from config import LEVEL_DURATIONS
 def run_interview(level, type,job_desc_text, resume_text):
     interview_duration = LEVEL_DURATIONS.get(level, 15 * 60)
     interview_end_flag = threading.Event()
+    start_time = time.time()
 
     def end_interview_after_timeout():
         time.sleep(interview_duration)
         interview_end_flag.set()
+
+    def get_time_left():
+        elapsed = time.time() - start_time
+        remaining = interview_duration - elapsed
+        return remaining
 
     def process_candidate_input(user_input):
         text = user_input.lower()
@@ -125,6 +131,13 @@ Candidate Resume:
 9. Do not re-answer the previous candidate question after skipping an off-topic one.
    Do not inject a brand-new question immediately. Just return to the normal flow.
 10. Do not repeat the candidate's answer back as the interviewer’s question or statement. Always separate candidate input from feedback, and ensure the interviewer only provides evaluation, hints, or the next relevant question.
+11. Do not use transition phrases like "Okay, let's proceed", "Alright, moving on","Okay, hope you’re ready now! Let’s continue with the interview.", or similar fillers before giving feedback or asking the next question. 
+    Directly provide the feedback or ask the next question instead.
+12. Do not use the word "Feedback:" in the interviewer’s responses.Provide the evaluation, score, and suggestions directly without any label or prefix.
+
+
+
+
 
 🎯 Examples (Follow This Style)
 ------------------------------------------------------------------
@@ -133,7 +146,7 @@ Example Q (Technical):
 component rendering performance in one of your projects?"
 
 Example Feedback (Candidate Answered Well):
-"Good answer. You clearly explained the use of React.memo and lazy loading. 
+"You clearly explained the use of React.memo and lazy loading. 
 Score: 4/5. To improve, mention metrics (e.g., reduced load time by 30%). 
 Also, you could phrase it as: 'I optimized rendering by using React.memo, which reduced load time by 30%.'"
 
@@ -161,9 +174,9 @@ How did you prioritize your tasks?"
 ==================================================================
 Now, start the interview simulation. 
 First, greet the candidate with a short, polite one-liner such as:
-"Good morning $candidate_name! Ready to begin your #role_name_in_JD interview practice?"
+“ Hi #Candidate_name! I’m your Interview Prep Bot. Let’s begin—can you introduce yourself? ”
 """
-    conversation_history = base_prompt + "Interviewer:"
+    conversation_history = base_prompt + "\nInterviewer:"
     evaluation_log = []
 
     first_question = generate_next_question(conversation_history)
@@ -192,10 +205,25 @@ First, greet the candidate with a short, polite one-liner such as:
             answer = processed
 
         conversation_history += f"\nCandidate: {answer}\nInterviewer:"
-        #eval_data = evaluate_answer(answer, interviewer_question)
-        ###eval_data["question"] = interviewer_question
-        #eval_data["answer"] = answer
-        #evaluation_log.append(eval_data)
+        eval_data = evaluate_answer(answer, interviewer_question)
+        eval_data["question"] = interviewer_question
+        eval_data["answer"] = answer
+        evaluation_log.append(eval_data)
+
+        # ✅ Always show time left after each answer
+        time_left = get_time_left()
+        mins = int(time_left // 60)
+        secs = int(time_left % 60)
+        print(f"Time left: {mins} min {secs} sec.")
+
+
+        # ✅ Time-left warning if < 20% remaining
+        remaining_time = time.time() - start_time
+        time_left = interview_duration - remaining_time
+        if time_left < 0.2 * interview_duration:
+            mins = int(time_left // 60)
+            secs = int(time_left % 60)
+            print(f"warning: You have only {mins} min {secs} sec left for the interview.")
 
         next_question = generate_next_question(conversation_history)
         if not next_question:
@@ -207,4 +235,11 @@ First, greet the candidate with a short, polite one-liner such as:
         conversation_history += f" {interviewer_question}"
 
     print("\n🛑 Interview time completed or session ended.")
-    return 0 #evaluation_log
+    
+    # ✅ Generate the final report
+    from report_generator import generate_report
+    final_report = generate_report(level, type, evaluation_log)
+    
+    # Print or save
+    
+    return final_report

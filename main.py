@@ -12,8 +12,6 @@ type= input ("Select Type of interview (HR/Technical): ").lower()
 
 if input("Start the interview? (y/n): ").lower() == "y" or "yes" or "ye":
     results = run_interview(level, type,job_desc_text, resume_text)
-    print("\n✅ Evaluation Summary:")
-    for r in results:
-        print(r)
+    
 else:
     print("Interview canceled.")
